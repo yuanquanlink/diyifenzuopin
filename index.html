@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第一份作品</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect fill='%23231a14' width='16' height='16'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%239dce73'/%3E%3C/svg%3E">
+  <script type="module" crossorigin src="assets/index-B-jHmPk_.js"></script>
+  <link rel="stylesheet" crossorigin href="assets/index-CDZpjrSk.css">
+</head>
+<body>
+  <div class="room">
+    <header class="mast">
+      <p class="eyebrow">后半夜</p>
+      <h1>第一份作品</h1>
+      <p class="lede" id="lede">陈可把灯关了。风扇还在转，比他的呼吸响。</p>
+    </header>
+
+    <div class="bench">
+      <section class="case" aria-label="旧电脑">
+        <div class="wood">
+          <span class="screw s1" aria-hidden="true"></span>
+          <span class="screw s2" aria-hidden="true"></span>
+          <span class="screw s3" aria-hidden="true"></span>
+          <span class="screw s4" aria-hidden="true"></span>
+          <div class="bezel">
+            <div class="glass" id="glass">
+              <iframe id="screen" title="玻璃" allow="autoplay; fullscreen; gamepad"></iframe>
+              <div class="scan" aria-hidden="true"></div>
+              <div class="veil" aria-hidden="true"></div>
+              <div class="passer" aria-hidden="true"></div>
+              <div class="warming" id="warming">
+                <p id="warming-text">管子还热着。</p>
+              </div>
+              <div class="fault" id="fault" hidden>
+                <p id="fault-text">没写回去的那几行，灭了。</p>
+                <button type="button" id="power-on">再开机</button>
+              </div>
+            </div>
+            <div class="chin">
+              <span class="led" id="led"></span>
+              <p class="caption" id="caption">卡带已经在里面。标题还在闪。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="voice" aria-live="polite" aria-label="房间">
+          <header class="voice-head">
+            <h2>房间</h2>
+          </header>
+          <div id="lines"></div>
+          <div class="choices" id="choices"></div>
+        </section>
+
+        <section class="manual" aria-label="薄册子">
+          <header class="manual-head">
+            <h2>薄册子</h2>
+            <p>缺了最要紧的一页。铅笔写过的，多半是错的。</p>
+          </header>
+          <div class="pages">
+            <article class="page" data-page="open">
+              <h3>打开</h3>
+              <p>点一下玻璃，键盘才进得去。Esc 从底下的字走到代码。顶上那一排是图、地图和声音。都在同一盒卡带里。</p>
+            </article>
+            <article class="page" data-page="draw" hidden>
+              <h3>画一块</h3>
+              <p>地板可以是一个方块。</p>
+              <p><kbd>rect(0,108,240,28,15)</kbd></p>
+              <p>颜色是 0 到 15 的号码。今晚用得上的不多。</p>
+            </article>
+            <article class="page" data-page="save" hidden>
+              <h3>存进去</h3>
+              <p>控制台里写 <kbd>save ye.tic</kbd>。这盒卡带叫「夜灯」，盒子只肯把这几个字母写上盘。</p>
+              <p>没存的改动只活在玻璃后面。盒子要是咳醒了，那些行就没了。存过的还在。</p>
+              <p>写完可以 <kbd>run</kbd>，或按 Ctrl+R。再来一局，也是这一下。</p>
+            </article>
+            <article class="page" data-page="pencil" hidden>
+              <h3>铅笔</h3>
+              <p>页边有人写得很重，像怕自己忘。别照抄进能跑的那几行。</p>
+              <p>往左走：<kbd>held(2)</kbd></p>
+              <p>点一下：<kbd>tap(4)</kbd></p>
+              <p>碰到灯：<kbd>touch(灯)</kbd></p>
+              <p>这些词，玻璃不认。</p>
+            </article>
+            <article class="page torn" data-page="torn" hidden>
+              <h3>撕掉的那页</h3>
+              <p class="scrap">bt</p>
+              <p class="scrap">np(4)</p>
+              <p>方向还留在纸边上。0 上，1 下，2 左，3 右。按住是半个词，点一下是后半个，带着这个 4。</p>
+              <p class="rip">人怎么听方向，灯怎么认他，都在撕走的那一半。</p>
+            </article>
+            <article class="page" data-page="one" hidden>
+              <h3>只留一幕</h3>
+              <p>第二幕、很长的动画、很多种颜色、一整场要打很久的东西，这只盒子不收。</p>
+              <p>今晚是一幕，一个动作。走到灯前面，或者走不到。这不是失败，是玻璃就这么大。</p>
+            </article>
+          </div>
+          <div class="tabs" role="tablist" aria-label="册子">
+            <button type="button" data-tab="open" aria-pressed="true">打开</button>
+            <button type="button" data-tab="draw" aria-pressed="false">画</button>
+            <button type="button" data-tab="save" aria-pressed="false">存</button>
+            <button type="button" data-tab="pencil" aria-pressed="false">铅笔</button>
+            <button type="button" data-tab="torn" aria-pressed="false">撕页</button>
+            <button type="button" data-tab="one" id="tab-one" aria-pressed="false">一幕</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="tape" aria-live="polite">
+      <header>
+        <h2>机箱</h2>
+        <p>它自己嘀咕的那几句。</p>
+      </header>
+      <ol id="log"></ol>
+      <button type="button" id="act-dawn" class="quiet">让他坐过来</button>
+      <button type="button" id="act-wipe" class="quiet">忘掉盒子里的卡带</button>
+    </section>
+  </div>
+</body>
+</html>
