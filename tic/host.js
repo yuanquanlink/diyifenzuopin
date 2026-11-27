@@ -190,22 +190,10 @@ function codeText(cart) {
 
 function freshenCart(existing, fresh) {
   var code = codeText(existing);
-  var purple = /cls\s*\(\s*flash\s+and\s+1/.test(code);
-  var slow = /p[xy]=p[xy][+-]1/.test(code);
-  if (!purple && !slow) return null;
-  var guessed = /\bbtn\s*\(/.test(code) || /\bbtnp\s*\(/.test(code);
-  if (!guessed) return fresh;
-  var next = code
-    .replace(/cls\s*\(\s*flash\s+and\s+1\s+or\s+0\s*\)/g, "cls(0)")
-    .replace(/px=px-1/g, "px=px-3")
-    .replace(/px=px\+1/g, "px=px+3")
-    .replace(/py=py-1/g, "py=py-3")
-    .replace(/py=py\+1/g, "py=py+3");
-  if (next === code) return null;
-  var kept = readChunks(existing).filter(function (chunk) { return chunk.type !== 5; });
-  kept.push({ type: 5, bank: 0, data: new TextEncoder().encode(next) });
-  return writeChunks(kept);
-};
+  if (/\bbtn\s*\(/.test(code) || /\bbtnp\s*\(/.test(code)) return null;
+  var stale = /cls\s*\(\s*flash\s+and\s+1/.test(code) || (/px=px-1/.test(code) && code.indexOf("step=3") < 0);
+  return stale ? fresh : null;
+}
 
 Module.onFsFlush = function () {
   if (mode === "studio") readCarts("flush");

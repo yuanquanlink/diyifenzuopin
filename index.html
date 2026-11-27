@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>第一份作品</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect fill='%23231a14' width='16' height='16'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%239dce73'/%3E%3C/svg%3E">
-  <script type="module" crossorigin src="./assets/index-BM3ZEqfm.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-C72lLFf7.css">
+  <script type="module" crossorigin src="./assets/index-Bdisgv5S.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D9uK778G.css">
 </head>
 <body>
   <div class="room">
@@ -34,9 +34,12 @@
               </div>
               <p class="key-hint" id="key-hint">点这面玻璃。键盘才会进去。</p>
               <div class="alarm" id="alarm" hidden>
-                <p>先存。</p>
-                <p>没写进卡带的几行，马上会灭。</p>
-                <p><kbd>save ye.tic</kbd></p>
+                <div class="alarm-card">
+                  <p class="alarm-big">先存</p>
+                  <p>没写进卡带的几行，马上会灭。</p>
+                  <p><kbd>save ye.tic</kbd></p>
+                  <p>已经有这盒的话，按 <kbd>Y</kbd> 才盖掉。</p>
+                </div>
               </div>
               <div class="fault" id="fault" hidden>
                 <p id="fault-text">没写回去的那几行，灭了。</p>
@@ -79,6 +82,7 @@
             <article class="page" data-page="save" hidden>
               <h3>存进去</h3>
               <p>控制台里写 <kbd>save ye.tic</kbd>。这盒卡带叫「夜灯」，盒子只肯把这几个字母写上盘。</p>
+              <p>第二次再存这同一个名字，玻璃会问要不要盖掉。按 <kbd>Y</kbd> 才写入，按 <kbd>N</kbd> 就留下旧的。不按的话，这一下等于没存。</p>
               <p>没存的改动只活在玻璃后面。盒子要是咳醒了，那些行就没了。存过的还在。</p>
               <p>写完可以 <kbd>run</kbd>，或按 Ctrl+R。再来一局，也是这一下。</p>
             </article>
@@ -89,7 +93,7 @@
               <p>点一下：<kbd>tap(4)</kbd></p>
               <p>碰到灯：<kbd>touch(灯)</kbd></p>
               <p>这些词，玻璃不认。</p>
-              <p>一次只挪一格，会像没走。代码里已经留了 <kbd>step</kbd>，一步可以是三格。灯旁边那条短杠，会告诉你离它还有多远。</p>
+              <p>一次只挪一格，会像没走。代码里已经留了 <kbd>step</kbd>，一步可以是三格。短杠在画面左上角。人离灯越近，它越长。</p>
             </article>
             <article class="page torn" data-page="torn" hidden>
               <h3>撕掉的那页</h3>
