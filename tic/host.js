@@ -3,7 +3,7 @@
 var Module = {
   canvas: document.getElementById("canvas"),
   locateFile: function (path) {
-    return "../vendor/tic80/" + path;
+    return new URL("../vendor/tic80/" + path, location.href).href;
   },
   arguments: [],
   print: function (text) {
@@ -20,6 +20,36 @@ var starter = null;
 function post(message) {
   parent.postMessage(message, "*");
 }
+
+var canvas = document.getElementById("canvas");
+
+function keysHere() {
+  return document.hasFocus();
+}
+
+function claimKeys() {
+  window.focus();
+  canvas.focus();
+  post({ type: "focus-state", on: keysHere() });
+}
+
+function reportKeys() {
+  post({ type: "focus-state", on: keysHere() });
+}
+
+document.addEventListener("pointerdown", function () {
+  claimKeys();
+}, true);
+window.addEventListener("focus", reportKeys);
+window.addEventListener("blur", function () {
+  post({ type: "focus-state", on: false });
+});
+setInterval(function () {
+  if (!keysHere()) return;
+  var modal = document.getElementById("add-modal");
+  if (modal && modal.style.display === "block") return;
+  if (document.activeElement !== canvas) canvas.focus();
+}, 300);
 
 Module.saveAs = function (blob, name) {
   post({ type: "download", name: String(name || "download"), size: blob.size || 0 });
@@ -91,15 +121,90 @@ Module.onFolderReady = function (dir) {
   } catch (err) {
     existed = false;
   }
+  if (!starter) {
+    post({ type: "error", text: "the starter cart was not ready" });
+    return;
+  }
   if (!existed) {
-    if (!starter) {
-      post({ type: "error", text: "the starter cart was not ready" });
-      return;
-    }
     fs.writeFile(path, starter);
+  } else {
+    var seated = fs.readFile(path);
+    var fresher = freshenCart(seated instanceof Uint8Array ? seated : new Uint8Array(seated), starter);
+    if (fresher) fs.writeFile(path, fresher);
   }
   post({ type: "folder", dir: root, seeded: !existed });
   readCarts(existed ? "seated" : "seeded");
+}
+
+function chunkWord(type, bank, size) {
+  return (type & 31) | ((bank & 7) << 5) | ((size & 0xffff) << 8);
+}
+
+function readChunks(cart) {
+  var out = [];
+  var ptr = 0;
+  while (ptr + 4 <= cart.length) {
+    var word = cart[ptr] | (cart[ptr + 1] << 8) | (cart[ptr + 2] << 16) | (cart[ptr + 3] << 24);
+    var type = word & 31;
+    var bank = (word >>> 5) & 7;
+    var size = (word >>> 8) & 0xffff;
+    ptr += 4;
+    if (ptr + size > cart.length) break;
+    out.push({ type: type, bank: bank, data: cart.slice(ptr, ptr + size) });
+    ptr += size;
+  }
+  return out;
+}
+
+function writeChunks(chunks) {
+  var total = 0;
+  chunks.forEach(function (chunk) { total += 4 + chunk.data.length; });
+  var out = new Uint8Array(total);
+  var at = 0;
+  chunks.forEach(function (chunk) {
+    var word = chunkWord(chunk.type, chunk.bank, chunk.data.length);
+    out[at] = word & 255;
+    out[at + 1] = (word >>> 8) & 255;
+    out[at + 2] = (word >>> 16) & 255;
+    out[at + 3] = (word >>> 24) & 255;
+    out.set(chunk.data, at + 4);
+    at += 4 + chunk.data.length;
+  });
+  return out;
+}
+
+function codeText(cart) {
+  var parts = [];
+  readChunks(cart).forEach(function (chunk) {
+    if (chunk.type === 5) parts.push(chunk.data);
+  });
+  var total = parts.reduce(function (n, part) { return n + part.length; }, 0);
+  var joined = new Uint8Array(total);
+  var at = 0;
+  parts.forEach(function (part) {
+    joined.set(part, at);
+    at += part.length;
+  });
+  return new TextDecoder().decode(joined);
+}
+
+function freshenCart(existing, fresh) {
+  var code = codeText(existing);
+  var purple = /cls\s*\(\s*flash\s+and\s+1/.test(code);
+  var slow = /p[xy]=p[xy][+-]1/.test(code);
+  if (!purple && !slow) return null;
+  var guessed = /\bbtn\s*\(/.test(code) || /\bbtnp\s*\(/.test(code);
+  if (!guessed) return fresh;
+  var next = code
+    .replace(/cls\s*\(\s*flash\s+and\s+1\s+or\s+0\s*\)/g, "cls(0)")
+    .replace(/px=px-1/g, "px=px-3")
+    .replace(/px=px\+1/g, "px=px+3")
+    .replace(/py=py-1/g, "py=py-3")
+    .replace(/py=py\+1/g, "py=py+3");
+  if (next === code) return null;
+  var kept = readChunks(existing).filter(function (chunk) { return chunk.type !== 5; });
+  kept.push({ type: 5, bank: 0, data: new TextEncoder().encode(next) });
+  return writeChunks(kept);
 };
 
 Module.onFsFlush = function () {
@@ -176,7 +281,7 @@ window.addEventListener("message", function (event) {
       });
     }, 30);
   } else if (data.type === "focus") {
-    document.getElementById("canvas").focus();
+    claimKeys();
   }
 });
 
@@ -192,13 +297,13 @@ async function boot() {
       installDawnFetch(blobUrl);
       Module.arguments = ["dawn.tic", "--skip"];
     } else {
-      var response = await fetch("../carts/ye.tic");
+      var response = await fetch(new URL("../carts/ye.tic", location.href).href);
       if (!response.ok) throw new Error("starter cart HTTP " + response.status);
       starter = new Uint8Array(await response.arrayBuffer());
       Module.arguments = ["--skip", "--cmd=load ye.tic"];
     }
     var script = document.createElement("script");
-    script.src = "../vendor/tic80/tic80.js";
+    script.src = new URL("../vendor/tic80/tic80.js", location.href).href;
     script.async = false;
     script.onerror = function () {
       post({ type: "error", text: "tic80.js did not load" });
